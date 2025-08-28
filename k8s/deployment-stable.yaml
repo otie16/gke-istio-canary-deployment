@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: istio-app-stable
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: istio-app
+      version: stable
+  template:
+    metadata:
+      labels:
+        app: istio-app
+        version: stable
+    spec:
+      containers:
+        - name: istio-app
+          image: us-central1-docker.pkg.dev/my-first-k8s-test-project/istio-canary-repo/myapp:v2
+          imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+          ports:
+            - containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 20

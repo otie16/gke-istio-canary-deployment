@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Beautiful Canary Python App</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="wrapper">
+    <div class="card" style="--accent: {{ color }};">
+      <div class="badge">{{ version }}</div>
+      <h1>{{ message }}</h1>
+      <p class="muted">FastAPI • Istio • GKE</p>
+
+      <div class="grid">
+        <div class="tile">
+          <h3>Pod Hostname</h3>
+          <code>{{ hostname }}</code>
+        </div>
+        <div class="tile">
+          <h3>Version</h3>
+          <code>{{ version }}</code>
+        </div>
+      </div>
+
+      <div class="actions">
+        <a class="btn" href="/api/info" target="_blank">View JSON</a>
+        <a class="btn outline" href="/healthz" target="_blank">Health</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+
