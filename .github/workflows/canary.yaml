@@ -39,7 +39,7 @@ jobs:
               GIT_SHA=${{ github.sha }}
               docker build -t $IMAGE:$GIT_SHA .
               docker push $IMAGE:$GIT_SHA
-              echo $TAG=$GIT_SHA >> $GITHUB_ENV
+              echo "TAG=$GIT_SHA" >> $GITHUB_ENV
 
           - name: Install gke-gcloud-auth-plugin
             run: |
