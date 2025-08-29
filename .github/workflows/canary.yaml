@@ -62,4 +62,4 @@ jobs:
             run: |
               kubectl get pods
               kubectl get services
-              kubectl describe deployment myapp-deployment
+              kubectl get deployments
