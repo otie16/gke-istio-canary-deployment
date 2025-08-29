@@ -1,0 +1,66 @@
+name: Canary Deployment in GKE
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: read
+  id-token: write
+
+
+env: 
+    REGION: ${{ secrets.GKE_REGION }}
+    CLUSTER_NAME: ${{ secrets.GKE_CLUSTER }}
+    PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+    IMAGE: us-central1-docker.pkg.dev/${{ secrets.GKE_PROJECT }}/istio-canary-repo/myapp
+    REPO: istio-canary-repo
+    APP_NAME: istio-app
+    
+
+jobs: 
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+          - name: Checkout code
+            uses: actions/checkout@v4
+
+          - name: Set up Cloud SDK
+            uses: google-github-actions/auth@v3
+            with:
+              workload_identity_provider: "projects/885928471498/locations/global/workloadIdentityPools/github-canary-istio-pool/providers/github"
+              service_account: "github-istio@${{ env.PROJECT_ID }}.iam.gserviceaccount.com"
+
+          - name: Configure Docker for Google Artifact Registry
+            run: gcloud auth configure-docker us-central1-docker.pkg.dev
+
+          - name: Build and Push Docker Image
+            run: |
+              GIT_SHA=${{ github.sha }}
+              docker build -t $IMAGE:$GIT_SHA .
+              docker push $IMAGE:$GIT_SHA
+              echo $TAG=$GIT_SHA >> $GITHUB_ENV
+
+          - name: Install gke-gcloud-auth-plugin
+            run: |
+                sudo apt-get update && sudo apt-get install -y apt-transport-https ca-certificates gnupg
+                echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | \
+                sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+                curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | \
+                sudo gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
+                sudo apt-get update && sudo apt-get install -y google-cloud-sdk-gke-gcloud-auth-plugin
+
+          - name: Get GKE Credentials
+            run: gcloud container clusters get-credentials $CLUSTER_NAME --region $REGION --project $PROJECT_ID
+
+          - name: Deploy to GKE
+            run: |
+              kubectl set image deployment/${APP_NAME}-canary $APP_NAME=$IMAGE:${TAG} --record
+              kubectl rollout status deployment/${APP_NAME}-canary  
+
+          - name: Verify Deployment
+            run: |
+              kubectl get pods
+              kubectl get services
+              kubectl describe deployment myapp-deployment
