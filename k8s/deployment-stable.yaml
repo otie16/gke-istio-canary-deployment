@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: istio-app
-          image: us-central1-docker.pkg.dev/my-first-k8s-test-project/istio-canary-repo/myapp:v2
+          image: us-central1-docker.pkg.dev/my-first-k8s-test-project/k8s-observability/nodejsapp:v1
           imagePullPolicy: Always
           resources:
             requests:
