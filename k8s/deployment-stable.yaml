@@ -23,16 +23,16 @@ spec:
               cpu: 250m
               memory: 512Mi
           ports:
-            - containerPort: 8000
-          readinessProbe:
-            httpGet:
-              path: /readyz
-              port: 8000
-            initialDelaySeconds: 5
-            periodSeconds: 10
-          livenessProbe:
-            httpGet:
-              path: /healthz
-              port: 8000
-            initialDelaySeconds: 15
-            periodSeconds: 20
+            - containerPort: 3000
+          # readinessProbe:
+          #   httpGet:
+          #     path: /readyz
+          #     port: 8000
+          #   initialDelaySeconds: 5
+          #   periodSeconds: 10
+          # livenessProbe:
+          #   httpGet:
+          #     path: /healthz
+          #     port: 8000
+          #   initialDelaySeconds: 15
+          #   periodSeconds: 20

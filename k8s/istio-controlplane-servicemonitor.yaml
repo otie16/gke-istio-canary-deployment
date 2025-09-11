@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: istio-controlplane
+  namespace: istio-system
+  labels:
+    release: kube-prometheus-stack   # must match your Helm release
+spec:
+  selector:
+    matchLabels:
+      istio: pilot
+  namespaceSelector:
+    matchNames:
+      - istio-system
+  endpoints:
+  - port: http-monitoring
+    path: /metrics
+    interval: 15s

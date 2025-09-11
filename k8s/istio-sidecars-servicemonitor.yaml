@@ -1,0 +1,15 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: istio-sidecars
+  namespace: istio-system
+  labels:
+    release: kube-prometheus-stack
+spec:
+  selector: {}
+  namespaceSelector:
+    any: true
+  endpoints:
+  - port: http-envoy-prom
+    path: /stats/prometheus
+    interval: 15s

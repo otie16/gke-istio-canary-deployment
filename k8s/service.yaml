@@ -8,6 +8,7 @@ spec:
   selector:
     app: istio-app
   ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 8000
+    - name: http
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
